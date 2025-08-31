@@ -189,6 +189,134 @@ for tool_name, tool_info in OPENBB_DOCS_TOOLS.items():
     tool_func = create_tool_function(tool_name, tool_info)
     mcp.tool()(tool_func)
 
+# ==========================
+# Ad-hoc Tools Section
+# ==========================
+
+@mcp.tool()
+def building_widgets_on_openbb() -> str:
+    """Essential boilerplate code for building OpenBB Workspace widgets. 
+    This provides the foundational FastAPI setup, CORS configuration, widgets.json endpoints, 
+    and register_widget decorator pattern. ALWAYS call this first when creating OpenBB widgets 
+    to get the required boilerplate structure."""
+    
+    return """# Essential Boilerplate Code for OpenBB Workspace Widgets
+
+```python
+# Import required libraries
+from pathlib import Path
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from functools import wraps
+import asyncio
+
+# Initialize empty dictionary for widgets
+WIDGETS = {}
+
+# Decorator that registers a widget configuration in the WIDGETS dictionary.
+def register_widget(widget_config):
+    \"\"\"
+    Decorator that registers a widget configuration in the WIDGETS dictionary.
+    Args:
+        widget_config (dict): The widget configuration to add to the WIDGETS 
+            dictionary. This should follow the same structure as other entries 
+            in WIDGETS.
+    Returns:
+        function: The decorated function.
+    \"\"\"
+    def decorator(func):
+        @wraps(func)
+        async def async_wrapper(*args, **kwargs):
+            # Call the original function
+            return await func(*args, **kwargs)
+        @wraps(func)
+        def sync_wrapper(*args, **kwargs):
+            # Call the original function
+            return func(*args, **kwargs)
+        # Extract the endpoint from the widget_config
+        endpoint = widget_config.get("endpoint")
+        if endpoint:
+            # Add an id field to the widget_config if not already present
+            if "widgetId" not in widget_config:
+                widget_config["widgetId"] = endpoint
+
+            # Use id as the key to allow multiple widgets per endpoint
+            widget_id = widget_config["widgetId"]
+            WIDGETS[widget_id] = widget_config
+
+        # Return the appropriate wrapper based on whether the function is async
+        if asyncio.iscoroutinefunction(func):
+            return async_wrapper
+        return sync_wrapper
+    return decorator
+
+# Initialize FastAPI application with metadata
+app = FastAPI(
+    title="Simple Backend",
+    description="Simple backend app for OpenBB Workspace",
+    version="0.0.1"
+)
+
+# Define allowed origins for CORS (Cross-Origin Resource Sharing)
+# This restricts which domains can access the API
+origins = [
+    "https://pro.openbb.co",
+]
+
+# Configure CORS middleware to handle cross-origin requests
+# This allows the specified origins to make requests to the API
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
+
+ROOT_PATH = Path(__file__).parent.resolve()
+
+@app.get("/")
+def read_root():
+    \"\"\"Root endpoint that returns basic information about the API\"\"\"
+    return {"Info": "Hello World"}
+
+
+# Endpoint that returns the registered widgets configuration
+# The WIDGETS dictionary is maintained by the registry.py helper
+# which automatically registers widgets when using the @register_widget decorator
+@app.get("/widgets.json")
+def get_widgets():
+    \"\"\"Returns the configuration of all registered widgets
+    
+    The widgets are automatically registered through the @register_widget decorator
+    and stored in the WIDGETS dictionary from registry.py
+    
+    Returns:
+        dict: The configuration of all registered widgets
+    \"\"\"
+    return WIDGETS
+```
+
+## Important Notes:
+
+- **CORS Configuration**: Always include the OpenBB Workspace origin (`https://pro.openbb.co`) in your CORS settings
+- **widgets.json Endpoint**: This endpoint is required for OpenBB Workspace to discover available widgets
+- **Register Widget Decorator**: The @register_widget decorator automatically manages widget registration
+
+## Running the Application:
+
+```bash
+# Using uvicorn directly
+uvicorn main:app --reload --port 8000
+
+# Or add this to your Python file
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+```
+"""
+
 # Get the Starlette app and add CORS middleware
 app = mcp.streamable_http_app()
 
