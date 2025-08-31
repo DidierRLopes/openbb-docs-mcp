@@ -165,7 +165,7 @@ OPENBB_DOCS_TOOLS = {
     }
 }
 
-mcp = FastMCP(name="OpenBB Docs MCP")
+mcp = FastMCP(name="OpenBB Widgets JSON MCP")
 
 # Create MCP tools for each documentation file
 for tool_name, tool_info in OPENBB_DOCS_TOOLS.items():
