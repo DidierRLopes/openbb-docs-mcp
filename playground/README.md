@@ -2,6 +2,10 @@
 
 A self-contained OpenBB widget that performs Monte Carlo simulations for stock price forecasting.
 
+<img width="730" height="1772" alt="image" src="https://github.com/user-attachments/assets/ef9e72e6-9bc1-4469-8e56-525934dfb756" />
+
+Created with Claude Code and the prompt _"Create an OpenBB widget that has 3 parameters (ticker str, start date and boolean). The data is meant to be a plotly chart, but also support raw data. And because it's a monte carlo simulation, can you add a run button to it?"_.
+
 ## Features
 
 - **3 Parameters:**
