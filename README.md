@@ -101,6 +101,27 @@ The server provides:
 ### Added ad-hoc
 - `building_widgets_on_openbb` - Essential boilerplate code for OpenBB widgets (ALWAYS call this first)
 
+## Example: Playground Monte Carlo Widget
+
+The `playground/` folder contains a complete Monte Carlo simulation widget built using Claude Code and this MCP server. This demonstrates the full development workflow:
+
+1. **Claude Code** queried the MCP server for OpenBB widget specifications
+2. **MCP tools** provided boilerplate code, plotly chart documentation, and JSON reference specs
+3. **Generated widget** includes:
+   - 3 parameters: ticker (text), start_date (date), use_volatility_adjustment (boolean)
+   - Plotly visualization with 50 simulation paths + percentile bands
+   - Raw data mode returning pure simulation arrays
+   - Run button for manual execution
+   - Full OpenBB Workspace integration
+
+To run the example:
+```bash
+cd playground
+uv sync
+uv run python main.py
+```
+
+This serves as a practical example of how AI coding assistants can leverage MCP servers to rapidly build compliant OpenBB widgets by accessing structured documentation programmatically.
 
 ## Deploy to Smithery
 
