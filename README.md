@@ -103,6 +103,8 @@ The server provides:
 
 ## Example: Playground Monte Carlo Widget
 
+<img width="1830" height="1772" alt="image" src="https://github.com/user-attachments/assets/f5bf5502-eaa3-420e-a1c4-f50ecc05c7d3" />
+
 The `playground/` folder contains a complete Monte Carlo simulation widget built using Claude Code and this MCP server. This demonstrates the full development workflow:
 
 1. **Claude Code** queried the MCP server for OpenBB widget specifications
